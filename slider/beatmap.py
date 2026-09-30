@@ -821,17 +821,7 @@ class Slider(HitObject):
                     f"expected points in the form x:y, got {point!r}",
                 )
 
-            try:
-                x = int(x)
-            except ValueError:
-                raise ValueError("x should be an int, got {x!r}")
-
-            try:
-                y = int(y)
-            except ValueError:
-                raise ValueError("y should be an int, got {y!r}")
-
-            points.append(Position(x, y))
+            points.append(Position(float(x), float(y)))
 
         try:
             repeat, *rest = rest
