@@ -891,7 +891,10 @@ class Slider(HitObject):
         else:
             tp = timing_points[0]
 
-        if tp.parent is not None:
+        if np.isnan(tp.ms_per_beat):
+            velocity_multiplier = 1
+            ms_per_beat = 0
+        elif tp.parent is not None:
             velocity_multiplier = np.clip(-100 / tp.ms_per_beat, 0.1, 10)
             ms_per_beat = tp.parent.ms_per_beat
         else:
@@ -900,11 +903,7 @@ class Slider(HitObject):
 
         pixels_per_beat = slider_multiplier * 100 * velocity_multiplier
         num_beats = (pixel_length * repeat) / pixels_per_beat
-
-        try:
-            duration = timedelta(milliseconds=int(num_beats * ms_per_beat))
-        except ValueError:
-            duration = timedelta()
+        duration = timedelta(milliseconds=int(num_beats * ms_per_beat))
 
         ticks = int(
             ((np.ceil((num_beats - 0.1) / repeat * slider_tick_rate) - 1)) * repeat
