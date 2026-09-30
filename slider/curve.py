@@ -188,23 +188,32 @@ class _MetaCurveMixin:
         lengths = [c.length for c in self._curves]
         length = sum(lengths)
         out = []
+
         for i, j in enumerate(accumulate(lengths[:-1])):
             self._curves[i].req_length = lengths[i]
             out.append(j / length)
-        self._curves[-1].req_length = max(
-            0,
-            lengths[-1] - (length - self.req_length),
-        )
+
+        if len(self._curves) > 0:
+            self._curves[-1].req_length = max(
+                0,
+                lengths[-1] - (length - self.req_length),
+            ) if len(lengths) > 0 else 0
+
         out.append(1)
+
         return out
 
     def __call__(self, t):
         ts = self._ts
-        if len(self._curves) == 1:
+
+        if len(self._curves) == 0:
+            return self.points[0]
+        elif len(self._curves) == 1:
             # Special case where we only have one curve
             return self._curves[0](t)
 
         bi = bisect.bisect_left(ts, t)
+
         if bi == 0:
             pre_t = 0
         else:
