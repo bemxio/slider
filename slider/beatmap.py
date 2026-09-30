@@ -900,7 +900,11 @@ class Slider(HitObject):
 
         pixels_per_beat = slider_multiplier * 100 * velocity_multiplier
         num_beats = (pixel_length * repeat) / pixels_per_beat
-        duration = timedelta(milliseconds=int(num_beats * ms_per_beat))
+
+        try:
+            duration = timedelta(milliseconds=int(num_beats * ms_per_beat))
+        except ValueError:
+            duration = timedelta()
 
         ticks = int(
             ((np.ceil((num_beats - 0.1) / repeat * slider_tick_rate) - 1)) * repeat
